@@ -9,7 +9,7 @@
                 "./src/components/*"
             ],
             "@assets/*": [
-                "./assets/*"
+                "./src/assets"
             ],
             "@screens/*": [
                 "./src/screens/*"
