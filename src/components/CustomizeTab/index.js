@@ -73,11 +73,7 @@ const CustomizeTab = props => {
     );
   };
 
-  return (
-    <SafeAreaView edges={'bottom'}>
-      <View style={styles.tabContainer}>{routes?.map(renderTabItems)}</View>
-    </SafeAreaView>
-  );
+  return <View style={styles.tabContainer}>{routes?.map(renderTabItems)}</View>;
 };
 
 export default CustomizeTab;
@@ -87,6 +83,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     backgroundColor: '#fff',
     height: 68,
+    paddingBottom: 10,
   },
   tabItems: {
     flex: 1,

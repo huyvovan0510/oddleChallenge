@@ -1,12 +1,17 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, forwardRef, useImperativeHandle} from 'react';
 import {TouchableOpacity, StyleSheet} from 'react-native';
 import IconHeartOutlined from '@components/Icons/IconHeartOutlined';
 import IconHeart from '@components/Icons/IconHeart';
 
 import {useSelector} from 'react-redux';
-const FavoriteButton = ({onPress, productId}) => {
+const FavoriteButton = ({onPress, productId}, ref) => {
   const {liked} = useSelector(state => state.favoritesReducer);
-  const isActive = useMemo(() => !!liked[productId], [productId, liked]);
+  const isActive = useMemo(() => !!liked?.[productId], [productId, liked]);
+
+  useImperativeHandle(ref, () => ({
+    isActive,
+  }));
+
   return (
     <TouchableOpacity
       style={styles.btnLike}
@@ -17,7 +22,7 @@ const FavoriteButton = ({onPress, productId}) => {
     </TouchableOpacity>
   );
 };
-export default FavoriteButton;
+export default forwardRef(FavoriteButton);
 const styles = StyleSheet.create({
   btnLike: {
     backgroundColor: '#FFFFFF',
@@ -36,7 +41,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.23,
     shadowRadius: 2.62,
-
+    zIndex: 1,
     elevation: 4,
   },
 });

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, Image, FlatList} from 'react-native';
+import {View, StyleSheet, Image, FlatList, Platform} from 'react-native';
 
-import {H1} from '@components/Typography';
+import {H1, H3} from '@components/Typography';
 import {
   addToFavorites,
   getListFavorites,
@@ -13,6 +13,8 @@ import ProductItem from '@components/ProductItem';
 import FavoriteButtonCustomize from '@components/FavoriteButtonCustomize';
 import {useIsFocused} from '@react-navigation/native';
 import {onUnLikeProduct} from '@redux/action/favotitesAction';
+import IconHeartOutlined from '@components/Icons/IconHeartOutlined';
+const HEADER_HEIGHT = Platform.OS === 'android' ? 80 : 110;
 
 const Favorites = ({navigation}) => {
   const [listLiked, setListLiked] = useState();
@@ -50,6 +52,13 @@ const Favorites = ({navigation}) => {
       removeFavorites(productId);
       listIdUnLike.current = [...listIdUnLike.current, productId];
     } else {
+      if (listIdUnLike.current?.includes(productId)) {
+        const newData = [...listIdUnLike.current].filter(
+          id => id !== productId,
+        );
+
+        listIdUnLike.current = newData;
+      }
       addToFavorites(productId);
     }
   };
@@ -64,7 +73,13 @@ const Favorites = ({navigation}) => {
   };
 
   const renderItem = ({item, index}) => {
-    return <ProductItem item={liked[item]} renderFavBtn={renderFavBtn} />;
+    return (
+      <ProductItem
+        disableDoubleTap={true}
+        item={liked?.[item]}
+        renderFavBtn={renderFavBtn}
+      />
+    );
   };
 
   return (
@@ -77,14 +92,21 @@ const Favorites = ({navigation}) => {
         </View>
         <Image source={avatar} style={styles.avatar} />
       </View>
-      <FlatList
-        style={styles.listStyle}
-        data={listLiked}
-        keyExtractor={item => `${item}`}
-        renderItem={renderItem}
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-      />
+      {listLiked?.length > 0 ? (
+        <FlatList
+          style={styles.listStyle}
+          data={listLiked}
+          keyExtractor={item => `${item}`}
+          renderItem={renderItem}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <View style={styles.emptyContent}>
+          <IconHeartOutlined />
+          <H3 style={styles.txtEmpty}>You have not liked any products yet</H3>
+        </View>
+      )}
     </View>
   );
 };
@@ -95,7 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    height: 110,
+    height: HEADER_HEIGHT,
     backgroundColor: '#ffff',
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -111,5 +133,15 @@ const styles = StyleSheet.create({
   contentContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  emptyContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+  },
+  txtEmpty: {
+    marginTop: 10,
+    textAlign: 'center',
   },
 });

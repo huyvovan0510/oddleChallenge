@@ -1,10 +1,16 @@
+import ListSkeleton from '@components/ListSkeleton';
 import ProductItem from '@components/ProductItem';
 import {H3} from '@components/Typography';
 import React from 'react';
-import {View, FlatList, StyleSheet} from 'react-native';
+import {View, FlatList, StyleSheet, Dimensions} from 'react-native';
+
+const {width} = Dimensions.get('screen');
+const ITEM_WIDTH = width * 0.7;
+const SPACE = 15;
+
 const HorizontalList = ({data = [], label}) => {
   const renderItem = ({item, index}) => {
-    return <ProductItem item={item} />;
+    return <ProductItem item={item} itemWidth={ITEM_WIDTH} />;
   };
 
   return (
@@ -12,29 +18,31 @@ const HorizontalList = ({data = [], label}) => {
       <H3 style={styles.label} bold color="#000000">
         {label}
       </H3>
-      <FlatList
-        horizontal
-        snapToInterval={297}
-        decelerationRate={'fast'}
-        snapToAlignment={'start'}
-        data={data}
-        keyExtractor={item => `${item?.id}`}
-        renderItem={renderItem}
-        contentContainerStyle={styles.contentContainer}
-        showsHorizontalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View style={styles.space} />}
-      />
+      {data?.length > 0 ? (
+        <FlatList
+          horizontal
+          snapToInterval={ITEM_WIDTH + SPACE}
+          decelerationRate={'fast'}
+          snapToAlignment={'start'}
+          data={data}
+          keyExtractor={item => `${item?.id}`}
+          renderItem={renderItem}
+          contentContainerStyle={styles.contentContainer}
+          showsHorizontalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={styles.space} />}
+        />
+      ) : (
+        <ListSkeleton horizontal={true} />
+      )}
     </View>
   );
 };
 export default HorizontalList;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  content: {
+    marginBottom: 20,
   },
   label: {marginHorizontal: 15, marginBottom: 20},
   contentContainer: {paddingHorizontal: 15},
-  space: {width: 15},
+  space: {width: SPACE},
 });

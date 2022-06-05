@@ -1,18 +1,26 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, FlatList, Image, Animated} from 'react-native';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Image,
+  Animated,
+  Platform,
+} from 'react-native';
 import ProductItem from '@components/ProductItem';
 import {H3, SParagraph} from '@components/Typography';
 import {getProducts} from '@network/productApi';
 import LinearGradient from 'react-native-linear-gradient';
 import avatar from '@assets/images/avatar.png';
 import {APP_ACC_NAME} from '../../../appConfigs';
+import ListSkeleton from '@components/ListSkeleton';
+import moment from 'moment';
 
+const HEADER_HEIGHT = Platform.OS === 'android' ? 80 : 110;
 const ListAnimated = Animated.createAnimatedComponent(FlatList);
-
 const renderItem = ({item, index}) => {
   return <ProductItem item={item} />;
 };
-
 const Shop = () => {
   const [listProduct, setListProduct] = useState();
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -35,12 +43,26 @@ const Shop = () => {
       </View>
     );
   };
+  const renderEmpty = () => {
+    return <ListSkeleton />;
+  };
 
   const transY = scrollY.interpolate({
     inputRange: [0, 10],
     outputRange: [-10, 0],
     extrapolate: 'clamp',
   });
+
+  const sayHi = useMemo(() => {
+    const now = moment().hour();
+    if (now >= 3 && now <= 11) {
+      return 'Good Morning';
+    } else if (now >= 12 && now <= 14) {
+      return 'Good afternoon';
+    } else {
+      return 'Good evening';
+    }
+  }, []);
 
   return (
     <LinearGradient
@@ -50,6 +72,7 @@ const Shop = () => {
         <View style={[styles.header]}>
           <Image source={avatar} style={styles.avatar} />
           <View style={styles.boxInfo}>
+            <SParagraph color="#515151">{sayHi}</SParagraph>
             <H3 color="#0A3040" style={styles.userName} bold>
               {APP_ACC_NAME.substring(0, 8)}
             </H3>
@@ -67,6 +90,7 @@ const Shop = () => {
         )}
         style={styles.listStyle}
         ListHeaderComponent={renderHeaderComponent}
+        ListEmptyComponent={renderEmpty}
         data={listProduct}
         keyExtractor={item => `${item?.id}`}
         renderItem={renderItem}
@@ -88,7 +112,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   header: {
-    height: 110,
+    height: HEADER_HEIGHT,
     backgroundColor: '#ffff',
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -97,10 +121,15 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   listStyle: {},
-  listHeader: {paddingVertical: 20},
+  listHeader: {
+    paddingVertical: 20,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 15,
+  },
   boxShadow: {
     backgroundColor: '#ffff',
-    height: 110,
+    height: HEADER_HEIGHT,
     width: '100%',
     position: 'absolute',
     top: 0,
@@ -118,6 +147,13 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     justifyContent: 'center',
+    // alignItems: 'center',
+  },
+  emptyContent: {
+    backgroundColor: 'red',
     alignItems: 'center',
+  },
+  boxInfo: {
+    marginLeft: 10,
   },
 });

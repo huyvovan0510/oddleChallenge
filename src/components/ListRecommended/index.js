@@ -1,8 +1,9 @@
 import React, {useEffect, useState, memo} from 'react';
+import {StyleSheet} from 'react-native';
 import HorizontalList from '@components/HorizontalList';
 import {getProducts} from '@network/productApi';
 
-const SameBrandList = ({query}) => {
+const RecommendedList = ({query}) => {
   const [data, setData] = useState();
 
   useEffect(() => {
@@ -15,7 +16,7 @@ const SameBrandList = ({query}) => {
     const {result} = await getProducts({
       orderBy: 'rating_DESC',
       where: {
-        brand: "l'oreal",
+        productType: 'mascara',
       },
     });
     if (result) {
@@ -23,6 +24,14 @@ const SameBrandList = ({query}) => {
     }
   };
 
-  return <HorizontalList data={data} label={`Because you like ${query}`} />;
+  return <HorizontalList data={data} label="Recommended for you" />;
 };
-export default memo(SameBrandList);
+export default memo(RecommendedList);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

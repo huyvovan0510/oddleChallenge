@@ -1,7 +1,7 @@
 import {LIKE_PRODUCT, UNLIKE_PRODUCT} from '../action/favotitesAction';
 
 const initState = {
-  liked: {},
+  liked: null,
 };
 
 const mainReduces = (state = initState, action) => {
