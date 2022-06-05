@@ -7,6 +7,7 @@ import IconHeart from '@components/Icons/IconHeart';
 import IconHeartOutlined from '@components/Icons/IconHeartOutlined';
 import IconShopActive from '@components/Icons/IconShopActive';
 import IconShopInactive from '@components/Icons/IconShopInactive';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const getTabInfo = tabName => {
   switch (tabName) {
@@ -72,7 +73,11 @@ const CustomizeTab = props => {
     );
   };
 
-  return <View style={styles.tabContainer}>{routes?.map(renderTabItems)}</View>;
+  return (
+    <SafeAreaView edges={'bottom'}>
+      <View style={styles.tabContainer}>{routes?.map(renderTabItems)}</View>
+    </SafeAreaView>
+  );
 };
 
 export default CustomizeTab;

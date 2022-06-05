@@ -24,7 +24,8 @@
                     "@components": "./src/components",
                     "@assets": "./src/assets",
                     "@screens": "./src/screens",
-                    "@network":"./src/network"
+                    "@network":"./src/network",
+                    "@redux": "./src/redux"
                 }
             }
         ]

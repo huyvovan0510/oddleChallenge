@@ -17,6 +17,9 @@
             "@network/*": [
                 "./src/network/*"
             ],
+            "@redux/*": [
+                "./src/redux/*"
+            ],
             
         }
     },

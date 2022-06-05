@@ -1,12 +1,17 @@
 import {GraphClientQuery} from './graphCms';
 import {gql} from 'graphql-request';
 
-const getProducts = async () => {
+const getProducts = async query => {
+  const {last = 20, orderBy = 'price_ASC', where} = query || {};
   try {
     const result = await GraphClientQuery(
       gql`
-        query products($last: Int) {
-          result: products(last: $last) {
+        query products(
+          $last: Int
+          $orderBy: ProductOrderByInput
+          $where: ProductWhereInput
+        ) {
+          result: products(last: $last, orderBy: $orderBy, where: $where) {
             id
             name
             brand
@@ -23,7 +28,9 @@ const getProducts = async () => {
         }
       `,
       {
-        last: 20,
+        last,
+        orderBy,
+        where,
       },
     );
     return result;

@@ -1,24 +1,45 @@
-import {H3, SParagraph} from '@components/Typography';
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  ImageBackground,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, ImageBackground, Dimensions} from 'react-native';
+import {useDispatch} from 'react-redux';
 
+import Button from '@components/Button';
 import IconStar from '@components/Icons/IconStar';
 import IconPrice from '@components/Icons/IconPrice';
 import IconInfo from '@components/Icons/IconInfo';
-import IconHeartOutlined from '@components/Icons/IconHeartOutlined';
+import {H3, SParagraph} from '@components/Typography';
+import {addToFavorites, removeFavorites} from '@network/oddoleNetwork';
 
-import Button from '@components/Button';
+import {onLikeProduct, onUnLikeProduct} from '@redux/action/favotitesAction';
+
+import FavoriteButton from '../FavoriteButton';
 
 const {width} = Dimensions.get('screen');
-const ITEM_WIDTH = 282;
+const ITEM_WIDTH = width - 30;
 
-const ProductItem = ({item}) => {
+const ProductItem = ({item, renderFavBtn}) => {
+  const dispatch = useDispatch();
+
+  const onFavorite = liked => {
+    liked ? unLike() : onLike();
+  };
+
+  const onLike = () => {
+    dispatch(onLikeProduct({...item}));
+    addToFavorites(item?.id);
+  };
+
+  const unLike = () => {
+    dispatch(onUnLikeProduct({id: item.id}));
+    removeFavorites(item?.id);
+  };
+
+  const favoritesBtn = () => {
+    if (renderFavBtn) {
+      return renderFavBtn(item);
+    }
+    return <FavoriteButton productId={item?.id} onPress={onFavorite} />;
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -28,10 +49,7 @@ const ProductItem = ({item}) => {
         <View style={styles.brandTag}>
           {item?.brand && <SParagraph>{item?.brand}</SParagraph>}
         </View>
-
-        <TouchableOpacity style={styles.btnLike}>
-          <IconHeartOutlined />
-        </TouchableOpacity>
+        {favoritesBtn()}
       </ImageBackground>
       <View style={styles.boxInfo}>
         <H3 numberOfLines={2} bold>
@@ -78,7 +96,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F5F5F5',
 
-    // width: ITEM_WIDTH,
+    width: ITEM_WIDTH,
     borderRadius: 6,
     // overflow: 'hidden',
     marginBottom: 15,
@@ -120,25 +138,5 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     top: 15,
     left: 15,
-  },
-  btnLike: {
-    backgroundColor: '#FFFFFF',
-    position: 'absolute',
-    top: 15,
-    right: 15,
-    width: 34,
-    height: 34,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 34 / 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-
-    elevation: 4,
   },
 });

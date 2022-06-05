@@ -1,13 +1,17 @@
-import ProductItem from '@components/ProductItem';
-import {H3, SParagraph} from '@components/Typography';
-import {getProducts} from '@network/Api';
 import React, {useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, FlatList, Image, Animated} from 'react-native';
+import ProductItem from '@components/ProductItem';
+import {H3, SParagraph} from '@components/Typography';
+import {getProducts} from '@network/productApi';
 import LinearGradient from 'react-native-linear-gradient';
 import avatar from '@assets/images/avatar.png';
 import {APP_ACC_NAME} from '../../../appConfigs';
 
 const ListAnimated = Animated.createAnimatedComponent(FlatList);
+
+const renderItem = ({item, index}) => {
+  return <ProductItem item={item} />;
+};
 
 const Shop = () => {
   const [listProduct, setListProduct] = useState();
@@ -20,10 +24,6 @@ const Shop = () => {
   const getProductFromBE = async () => {
     const {result} = await getProducts();
     setListProduct(result);
-  };
-
-  const renderItem = ({item, index}) => {
-    return <ProductItem item={item} />;
   };
 
   const renderHeaderComponent = () => {
@@ -50,7 +50,6 @@ const Shop = () => {
         <View style={[styles.header]}>
           <Image source={avatar} style={styles.avatar} />
           <View style={styles.boxInfo}>
-            <SParagraph color="#515151">{'Good Morning'}</SParagraph>
             <H3 color="#0A3040" style={styles.userName} bold>
               {APP_ACC_NAME.substring(0, 8)}
             </H3>
@@ -97,10 +96,10 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     zIndex: 2,
   },
-  listStyle: {paddingHorizontal: 20},
+  listStyle: {},
   listHeader: {paddingVertical: 20},
   boxShadow: {
-    backgroundColor: 'red',
+    backgroundColor: '#ffff',
     height: 110,
     width: '100%',
     position: 'absolute',
@@ -116,5 +115,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5.46,
     elevation: 9,
     zIndex: 1,
+  },
+  contentContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
